@@ -7,16 +7,18 @@
 
 	const { data } = $props();
 
-	const displayedEvents = data.events.map<DisplayedEvent>(event => ({
-		id: event.id,
-		title: event.title,
-		context: event.context,
-		period: {
-			start: event.startDate,
-			end: event.endDate
-		},
-		impact: event.impact
-	}));
+	const displayedEvents = $derived(
+		data.events.map<DisplayedEvent>((event) => ({
+			id: event.id,
+			title: event.title,
+			context: event.context,
+			period: {
+				start: event.startDate,
+				end: event.endDate
+			},
+			impact: event.impact
+		}))
+	);
 
 	const columns: ColumnDef<DisplayedEvent>[] = [
 		{

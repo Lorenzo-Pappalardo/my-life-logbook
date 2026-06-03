@@ -13,8 +13,12 @@
 	} = $props();
 
 	const table = createSvelteTable({
-		data,
-		columns,
+		get data() {
+			return data;
+		},
+		get columns() {
+			return columns;
+		},
 		getCoreRowModel: getCoreRowModel(),
 		getFilteredRowModel: getFilteredRowModel(),
 		getSortedRowModel: getSortedRowModel(),
