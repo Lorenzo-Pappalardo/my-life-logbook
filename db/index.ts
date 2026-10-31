@@ -1,7 +1,7 @@
+import { eq } from 'drizzle-orm';
 import { drizzle } from 'drizzle-orm/tursodatabase/database';
 import { DB_FILE_NAME } from '../drizzle.config';
-import { logbookTable, type logbookTableInsert } from './schema';
-import { eq } from 'drizzle-orm';
+import { logbookTable, type LogbookTableInsert } from './schema';
 
 const db = drizzle({ connection: { path: DB_FILE_NAME } });
 console.log('DB connection established with file:', DB_FILE_NAME);
@@ -12,7 +12,7 @@ const { lastInsertRowid } = await db.insert(logbookTable).values({
     context: 'Testing the logbook entry insertion.',
     startDate: new Date().toISOString(),
     impact: true
-} satisfies logbookTableInsert);
+} satisfies LogbookTableInsert);
 
 console.log('Before:', await db.select().from(logbookTable).all());
 

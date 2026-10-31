@@ -12,5 +12,5 @@ export const logbookTable = sqliteTable('logbook', {
     updatedAt: text().default(new Date().toISOString())
 });
 
-export type logbookTableSelect = typeof logbookTable.$inferSelect;
-export type logbookTableInsert = typeof logbookTable.$inferInsert;
+export type LogbookTableSelect = typeof logbookTable.$inferSelect;
+export type LogbookTableInsert = typeof logbookTable.$inferInsert;

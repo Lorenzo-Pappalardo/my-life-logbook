@@ -1,0 +1,10 @@
+:host {
+    display: block;
+    padding: var(--padding-block) var(--padding-inline);
+
+    > table {
+        width: 100%;
+        border: 1px solid var(--border-color);
+        border-spacing: 0 8px;
+    }
+}

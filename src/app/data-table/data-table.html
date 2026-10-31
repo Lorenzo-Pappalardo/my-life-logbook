@@ -1,0 +1,30 @@
+<table>
+    <thead>
+        <tr>
+            <th>Title</th>
+            <th>Context</th>
+            <th>Period</th>
+            <th>Impact</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        @for (row of data; track row.id) {
+            <tr>
+                <th>{{ row.title }}</th>
+                <th>{{ row.context }}</th>
+                <th>{{ row.startDate }} - {{ row.endDate }}</th>
+                <th>{{ row.impact | impact }}</th>
+                <th>
+                    <a class="lbutton lbutton--small" [routerLink]="`/edit/${row.id}`">Edit</a>
+                </th>
+            </tr>
+        }
+    </tbody>
+    <tfoot>
+        <tr>
+            <th scope="row" [colSpan]="1">Entries</th>
+            <td>{{ data?.length }}</td>
+        </tr>
+    </tfoot>
+</table>
