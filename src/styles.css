@@ -1,1 +1,18 @@
 /* You can add global styles to this file, and also import other style files */
+html,
+body {
+    margin: 0;
+    padding: 0;
+    width: 100vw;
+    height: 100vh;
+}
+
+.my-button {
+    display: inline-block;
+    padding: 8px 16px;
+    background-color: #600;
+    color: var(--text-color);
+    text-decoration: none;
+    border-radius: 4px;
+    transition: background-color 0.3s ease;
+}

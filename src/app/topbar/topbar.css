@@ -1,0 +1,13 @@
+:host {
+    --background: linear-gradient(to bottom, #900, #600);
+
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    color-scheme: light dark;
+    background: var(--background);
+
+    @media (prefers-color-scheme: dark) {
+        --background: linear-gradient(to bottom, #300, #100);
+    }
+}
