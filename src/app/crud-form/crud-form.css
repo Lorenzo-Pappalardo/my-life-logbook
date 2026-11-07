@@ -1,0 +1,36 @@
+:host {
+    display: block;
+    padding: var(--padding-block) var(--padding-inline);
+
+    form {
+        --inline-gap: 16px;
+
+        display: grid;
+        grid-template-areas:
+            'metadata'
+            'description'
+            'action';
+        grid-template-rows: min-content;
+        gap: 8px;
+
+        div#metadata-group {
+            grid-area: metadata;
+            display: grid;
+            grid-template-columns: 3fr repeat(4, 1fr);
+            gap: var(--inline-gap);
+        }
+
+        div#description-group {
+            grid-area: description;
+            display: flex;
+            flex-direction: column;
+        }
+
+        div#action-group {
+            grid-area: action;
+            margin-top: 4px;
+            display: flex;
+            gap: var(--inline-gap);
+        }
+    }
+}

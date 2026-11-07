@@ -54,6 +54,11 @@ h3 {
     font-weight: bold;
 }
 
+a[routerLink] {
+    text-decoration: none;
+    color: inherit;
+}
+
 .lbutton {
     display: inline-block;
     padding: 8px 16px;
@@ -65,5 +70,15 @@ h3 {
 
     &.lbutton--small {
         padding: 4px 16px;
+    }
+}
+
+form {
+    div.form-field {
+        display: flex;
+
+        &.form-field--vertical {
+            flex-direction: column;
+        }
     }
 }

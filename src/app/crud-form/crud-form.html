@@ -1,0 +1,51 @@
+<form>
+    <div id="metadata-group">
+        <div class="form-field form-field--vertical">
+            <label for="title">Title:</label>
+            <input type="text" id="title" name="title" required />
+        </div>
+        <div class="form-field form-field--vertical">
+            <label for="context">Context:</label>
+            <select id="context" name="context" required>
+                <option value="" selected>Select Context</option>
+                @for (item of contexts; track item) {
+                    <option value="{{ item }}" selected>{{ item }}</option>
+                }
+            </select>
+        </div>
+        <div class="form-field form-field--vertical">
+            <label for="start-date">Start Date:</label>
+            <input type="date" id="start-date" name="start-date" required />
+        </div>
+        <div class="form-field form-field--vertical">
+            <label for="end-date">End Date:</label>
+            <input type="date" id="end-date" name="end-date" />
+        </div>
+        <div class="form-field form-field--vertical">
+            <label for="impact">Impact:</label>
+            <select id="impact" name="impact" required>
+                <option value="" selected>Select Impact</option>
+                <option value="positive">Positive</option>
+                <option value="negative">Negative</option>
+            </select>
+        </div>
+    </div>
+    <div id="description-group">
+        <div class="form-field form-field--vertical">
+            <label for="description">Description:</label>
+            <textarea id="description" name="description" rows="10"></textarea>
+        </div>
+    </div>
+    <div id="action-group">
+        <button type="submit">
+            @if (isCreate) {
+                Create
+            } @else {
+                Save
+            }
+        </button>
+        @if (!isCreate) {
+            <button type="button">Delete</button>
+        }
+    </div>
+</form>

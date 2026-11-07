@@ -1,11 +1,11 @@
 import { Component } from '@angular/core';
+import { RouterOutlet } from '@angular/router';
 import { Topbar } from './topbar/topbar';
-import { DataTable } from './data-table/data-table';
 
 @Component({
     selector: 'app-root',
     styleUrl: './app.css',
     templateUrl: './app.html',
-    imports: [Topbar, DataTable]
+    imports: [Topbar, RouterOutlet]
 })
 export class App {}
