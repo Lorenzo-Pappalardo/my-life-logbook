@@ -1,11 +1,14 @@
 import { AngularNodeAppEngine, createNodeRequestHandler, isMainModule, writeResponseToNodeResponse } from '@angular/ssr/node';
 import express from 'express';
 import { join } from 'node:path';
+import { getDbConnection } from '../db/index';
+import { logbookTable } from '../db/schema';
 
 const browserDistFolder = join(import.meta.dirname, '../browser');
 
 const app = express();
 const angularApp = new AngularNodeAppEngine();
+const db = getDbConnection();
 
 /**
  * Example Express Rest API endpoints can be defined here.
@@ -18,6 +21,11 @@ const angularApp = new AngularNodeAppEngine();
  * });
  * ```
  */
+
+app.get('/api/logbook', (req, res) => {
+    const data = db.select().from(logbookTable).all();
+    res.json(data);
+});
 
 /**
  * Serve static files from /browser

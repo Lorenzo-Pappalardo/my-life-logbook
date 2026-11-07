@@ -9,7 +9,7 @@
     "test": "ng test",
     "serve:ssr:my-life-logbook": "node dist/my-life-logbook/server/server.mjs",
     "db:push": "bun drizzle-kit push",
-    "db:start": "bun db/index.ts"
+    "db:seed": "bun db/seed.ts"
   },
   "private": true,
   "dependencies": {
