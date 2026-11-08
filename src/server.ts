@@ -2,7 +2,7 @@ import { AngularNodeAppEngine, createNodeRequestHandler, isMainModule, writeResp
 import express from 'express';
 import { join } from 'node:path';
 import { getDbConnection } from '../db/index';
-import { logbookTable } from '../db/schema';
+import { logbookTable, LogbookTableSelect } from '../db/schema';
 
 const browserDistFolder = join(import.meta.dirname, '../browser');
 
@@ -22,8 +22,11 @@ const db = getDbConnection();
  * ```
  */
 
-app.get('/api/logbook', (req, res) => {
-    const data = db.select().from(logbookTable).all();
+app.get('/api/logbook', async (req, res) => {
+    const data: readonly LogbookTableSelect[] = await db.select().from(logbookTable).all();
+
+    // TO-DO: Add validation with Zod
+
     res.json(data);
 });
 

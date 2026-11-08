@@ -1,6 +1,7 @@
-import { Component, OnInit, signal, WritableSignal } from '@angular/core';
+import { Component, inject, OnInit, Signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { LogbookTableSelect } from '../../../db/schema';
+import { Db } from '../db';
 import { ImpactPipe } from '../impact-pipe';
 
 @Component({
@@ -10,11 +11,11 @@ import { ImpactPipe } from '../impact-pipe';
     templateUrl: './data-table.html'
 })
 export class DataTable implements OnInit {
-    #_data: WritableSignal<LogbookTableSelect[]> = signal([]);
+    private readonly db = inject(Db);
 
-    public readonly data = this.#_data.asReadonly();
+    public readonly data: Signal<readonly LogbookTableSelect[]> = this.db.data;
 
-    public ngOnInit(): void {
-        // Add httpClient and call api
+    public ngOnInit() {
+        this.db.getLogbookEntries();
     }
 }
