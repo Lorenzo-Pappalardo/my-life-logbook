@@ -13,7 +13,7 @@
             <tr>
                 <th>{{ row.title }}</th>
                 <th>{{ row.context }}</th>
-                <th>{{ row.startDate }} - {{ row.endDate }}</th>
+                <th>{{ row.startDate }}{{ row.endDate !== '' ? ` - ${row.endDate}` : '' }}</th>
                 <th>{{ row.impact | impact }}</th>
                 <th>
                     <a class="lbutton lbutton--small" [routerLink]="`/edit/${row.id}`">Edit</a>
