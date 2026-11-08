@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Service, signal, WritableSignal } from '@angular/core';
-import { LogbookTableCreate, LogbookTableRead } from '../../db/schema';
+import { LogbookTableCreate, LogbookTableRead, LogbookTableUpdate } from '../../db/schema';
 
 @Service()
 export class Db {
@@ -16,7 +16,19 @@ export class Db {
         });
     }
 
+    public getLogbookEntry(id: number) {
+        return this.http.get<LogbookTableRead>(`/api/logbook/${id}`);
+    }
+
     public saveEntry(entry: LogbookTableCreate) {
         return this.http.post<void>('/api/logbook/create', entry);
+    }
+
+    public editEntry(entry: LogbookTableUpdate) {
+        return this.http.put<void>(`/api/logbook/edit/${entry.id}`, entry);
+    }
+
+    public deleteEntry(id: number) {
+        return this.http.delete<void>(`/api/logbook/delete/${id}`);
     }
 }

@@ -1,6 +1,6 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { LogbookTableCreate } from '../../../db/schema';
+import { LogbookTableCreate, LogbookTableUpdate } from '../../../db/schema';
 import { Db } from '../db';
 import { contexts } from './crud-form.model';
 
@@ -10,15 +10,21 @@ import { contexts } from './crud-form.model';
     styleUrl: './crud-form.css',
     templateUrl: './crud-form.html'
 })
-export class CrudForm {
+export class CrudForm implements OnInit {
     private readonly activatedRoute = inject(ActivatedRoute);
     private router = inject(Router);
     private readonly db = inject(Db);
 
     public readonly contexts = contexts;
-    public readonly isCreate: boolean = this.activatedRoute.snapshot.params['id'] === undefined;
+    public readonly id: string = this.activatedRoute.snapshot.params['id'];
 
-    public onSubmit(event: SubmitEvent): void {
+    public ngOnInit() {
+        if (this.id !== undefined) {
+            const entry = this.db.data()[Number(this.id) - 1];
+        }
+    }
+
+    public onSubmit(event: SubmitEvent) {
         event.stopPropagation();
         event.preventDefault();
 
@@ -33,8 +39,19 @@ export class CrudForm {
             impact: data.get('impact') === 'true'
         };
 
-        this.db.saveEntry(entry).subscribe(() => {
-            this.router.navigate(['']);
-        });
+        if (this.id === undefined) {
+            this.db.saveEntry(entry).subscribe(() => {
+                this.router.navigate(['']);
+            });
+        } else {
+            this.db
+                .editEntry({
+                    id: Number(this.id),
+                    ...entry
+                } satisfies LogbookTableUpdate)
+                .subscribe(() => {
+                    this.router.navigate(['']);
+                });
+        }
     }
 }

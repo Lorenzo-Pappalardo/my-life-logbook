@@ -4,7 +4,7 @@ import { Pipe, PipeTransform } from '@angular/core';
     name: 'impact'
 })
 export class ImpactPipe implements PipeTransform {
-    transform(value: boolean, ...args: unknown[]): unknown {
+    transform(value: boolean): unknown {
         return value ? 'Positive' : 'Negative';
     }
 }

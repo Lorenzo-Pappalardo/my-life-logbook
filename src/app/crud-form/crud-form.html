@@ -38,13 +38,13 @@
     </div>
     <div id="action-group">
         <button type="submit">
-            @if (isCreate) {
+            @if (id === undefined) {
                 Create
             } @else {
                 Save
             }
         </button>
-        @if (!isCreate) {
+        @if (!id) {
             <button type="button">Delete</button>
         }
     </div>

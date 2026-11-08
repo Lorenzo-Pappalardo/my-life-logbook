@@ -3,6 +3,7 @@ import { json } from 'body-parser';
 import express from 'express';
 import { join } from 'node:path';
 import { getDbConnection } from '../db/index';
+import { prettifyDate } from '../db/prettify-date';
 import { logbookTable, LogbookTableCreate, LogbookTableRead } from '../db/schema';
 
 const browserDistFolder = join(import.meta.dirname, '../browser');
@@ -37,9 +38,26 @@ app.post('/api/logbook/create', async (req, res) => {
 
     // TO-DO: Add validation with Zod
 
+    payload.startDate = prettifyDate(payload.startDate);
+    payload.endDate = prettifyDate(payload.endDate);
+
     console.log(await db.insert(logbookTable).values(payload).run());
 
     res.status(201).send();
+});
+
+app.put('/api/logbook/edit/{id}', async (req, res) => {
+    const payload = req.body as LogbookTableCreate;
+
+    // TO-DO: Add validation with Zod
+
+    console.log(await db.update(logbookTable).set(payload).run());
+
+    res.status(200).send();
+});
+
+app.delete('/api/logbook/{id}', async (req, res) => {
+    res.status(200).send();
 });
 
 /**
