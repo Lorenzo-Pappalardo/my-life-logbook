@@ -8,8 +8,7 @@
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "serve:ssr:my-life-logbook": "node dist/my-life-logbook/server/server.mjs",
-    "db:push": "bun drizzle-kit push",
-    "db:seed": "bun db/seed.ts"
+    "db:push": "bun drizzle-kit push"
   },
   "private": true,
   "dependencies": {

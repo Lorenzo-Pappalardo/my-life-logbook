@@ -1,12 +1,14 @@
 import { AngularNodeAppEngine, createNodeRequestHandler, isMainModule, writeResponseToNodeResponse } from '@angular/ssr/node';
+import { json } from 'body-parser';
 import express from 'express';
 import { join } from 'node:path';
 import { getDbConnection } from '../db/index';
-import { logbookTable, LogbookTableSelect } from '../db/schema';
+import { logbookTable, LogbookTableCreate, LogbookTableRead } from '../db/schema';
 
 const browserDistFolder = join(import.meta.dirname, '../browser');
 
 const app = express();
+app.use(json());
 const angularApp = new AngularNodeAppEngine();
 const db = getDbConnection();
 
@@ -23,11 +25,21 @@ const db = getDbConnection();
  */
 
 app.get('/api/logbook', async (req, res) => {
-    const data: readonly LogbookTableSelect[] = await db.select().from(logbookTable).all();
+    const data: readonly LogbookTableRead[] = await db.select().from(logbookTable).all();
 
     // TO-DO: Add validation with Zod
 
     res.json(data);
+});
+
+app.post('/api/logbook/create', async (req, res) => {
+    const payload = req.body as LogbookTableCreate;
+
+    // TO-DO: Add validation with Zod
+
+    console.log(await db.insert(logbookTable).values(payload).run());
+
+    res.status(201).send();
 });
 
 /**

@@ -8,9 +8,10 @@ export const logbookTable = sqliteTable('logbook', {
     startDate: text().notNull(),
     endDate: text(),
     impact: integer({ mode: 'boolean' }).notNull(),
-    createdAt: text().default(new Date().toISOString()),
-    updatedAt: text().default(new Date().toISOString())
+    createdAt: text().default(new Date().toDateString()),
+    updatedAt: text().default(new Date().toDateString())
 });
 
-export type LogbookTableSelect = typeof logbookTable.$inferSelect;
-export type LogbookTableInsert = typeof logbookTable.$inferInsert;
+export type LogbookTableCreate = Omit<typeof logbookTable.$inferInsert, 'id' | 'createdAt' | 'updatedAt'>;
+export type LogbookTableRead = typeof logbookTable.$inferSelect;
+export type LogbookTableUpdate = typeof logbookTable.$inferInsert;
