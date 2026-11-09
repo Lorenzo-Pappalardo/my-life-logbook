@@ -1,11 +1,13 @@
 import { Component, inject, OnInit } from '@angular/core';
+import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { unprettifyDate } from '../../../db/prettify-date';
 import { LogbookTableCreate, LogbookTableUpdate } from '../../../db/schema';
 import { Db } from '../db';
 import { contexts } from './crud-form.model';
 
 @Component({
-    imports: [],
+    imports: [ReactiveFormsModule],
     selector: 'app-crud-form',
     styleUrl: './crud-form.css',
     templateUrl: './crud-form.html'
@@ -14,29 +16,41 @@ export class CrudForm implements OnInit {
     private readonly activatedRoute = inject(ActivatedRoute);
     private router = inject(Router);
     private readonly db = inject(Db);
+    private formBuilder = inject(FormBuilder);
 
     public readonly contexts = contexts;
     public readonly id: string = this.activatedRoute.snapshot.params['id'];
+    public readonly logbookForm = this.formBuilder.group({
+        title: ['', Validators.required],
+        description: [''],
+        context: ['', Validators.required],
+        startDate: ['', Validators.required],
+        endDate: [''],
+        impact: ['', Validators.required]
+    });
 
     public ngOnInit() {
         if (this.id !== undefined) {
             const entry = this.db.data()[Number(this.id) - 1];
+            this.logbookForm.patchValue({
+                title: entry.title,
+                description: entry.description,
+                context: entry.context,
+                startDate: unprettifyDate(entry.startDate),
+                endDate: unprettifyDate(entry.endDate),
+                impact: entry.impact.toString()
+            });
         }
     }
 
-    public onSubmit(event: SubmitEvent) {
-        event.stopPropagation();
-        event.preventDefault();
-
-        const data = new FormData(event.target as HTMLFormElement);
-
+    public onSubmit() {
         const entry: LogbookTableCreate = {
-            title: data.get('title') as string,
-            description: data.get('description') as string,
-            context: data.get('context') as string,
-            startDate: data.get('start-date') as string,
-            endDate: data.get('end-date') as string,
-            impact: data.get('impact') === 'true'
+            title: this.logbookForm.get('title')?.value as string,
+            description: this.logbookForm.get('description')?.value as string,
+            context: this.logbookForm.get('context')?.value as string,
+            startDate: this.logbookForm.get('startDate')?.value as string,
+            endDate: this.logbookForm.get('endDate')?.value as string,
+            impact: this.logbookForm.get('impact')?.value === 'true'
         };
 
         if (this.id === undefined) {

@@ -1,12 +1,12 @@
-<form (submit)="onSubmit($event)">
+<form [formGroup]="logbookForm" (ngSubmit)="onSubmit()">
     <div id="metadata-group">
         <div class="form-field form-field--vertical">
             <label for="title">Title:</label>
-            <input type="text" id="title" name="title" required />
+            <input type="text" id="title" formControlName="title" required />
         </div>
         <div class="form-field form-field--vertical">
             <label for="context">Context:</label>
-            <select id="context" name="context" required>
+            <select id="context" formControlName="context" required>
                 <option value="" selected>Select Context</option>
                 @for (item of contexts; track item) {
                     <option value="{{ item }}">{{ item }}</option>
@@ -14,16 +14,16 @@
             </select>
         </div>
         <div class="form-field form-field--vertical">
-            <label for="start-date">Start Date:</label>
-            <input type="date" id="start-date" name="start-date" required />
+            <label for="startDate">Start Date:</label>
+            <input type="date" id="startDate" formControlName="startDate" required />
         </div>
         <div class="form-field form-field--vertical">
-            <label for="end-date">End Date:</label>
-            <input type="date" id="end-date" name="end-date" />
+            <label for="endDate">End Date:</label>
+            <input type="date" id="endDate" formControlName="endDate" />
         </div>
         <div class="form-field form-field--vertical">
             <label for="impact">Impact:</label>
-            <select id="impact" name="impact" required>
+            <select id="impact" formControlName="impact" required>
                 <option value="" selected>Select Impact</option>
                 <option value="true">Positive</option>
                 <option value="false">Negative</option>
@@ -33,18 +33,18 @@
     <div id="description-group">
         <div class="form-field form-field--vertical">
             <label for="description">Description:</label>
-            <textarea id="description" name="description" rows="10"></textarea>
+            <textarea id="description" formControlName="description" rows="10"></textarea>
         </div>
     </div>
     <div id="action-group">
-        <button type="submit">
+        <button type="submit" [disabled]="logbookForm.invalid">
             @if (id === undefined) {
                 Create
             } @else {
                 Save
             }
         </button>
-        @if (!id) {
+        @if (id) {
             <button type="button">Delete</button>
         }
     </div>
