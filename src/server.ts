@@ -1,10 +1,11 @@
 import { AngularNodeAppEngine, createNodeRequestHandler, isMainModule, writeResponseToNodeResponse } from '@angular/ssr/node';
 import { json } from 'body-parser';
+import { eq } from 'drizzle-orm';
 import express from 'express';
 import { join } from 'node:path';
 import { getDbConnection } from '../db/index';
 import { prettifyDate } from '../db/prettify-date';
-import { logbookTable, LogbookTableCreate, LogbookTableRead } from '../db/schema';
+import { logbookTable, LogbookTableCreate, LogbookTableRead, LogbookTableUpdate } from '../db/schema';
 
 const browserDistFolder = join(import.meta.dirname, '../browser');
 
@@ -43,21 +44,21 @@ app.post('/api/logbook/create', async (req, res) => {
 
     console.log(await db.insert(logbookTable).values(payload).run());
 
-    res.status(201).send();
+    res.sendStatus(201);
 });
 
-app.put('/api/logbook/edit/{id}', async (req, res) => {
-    const payload = req.body as LogbookTableCreate;
+app.put('/api/logbook/edit', async (req, res) => {
+    const payload = req.body as LogbookTableUpdate;
 
     // TO-DO: Add validation with Zod
 
-    console.log(await db.update(logbookTable).set(payload).run());
+    if (payload.id != undefined) console.log(await db.update(logbookTable).set(payload).where(eq(logbookTable.id, payload.id)));
 
-    res.status(200).send();
+    res.sendStatus(200);
 });
 
-app.delete('/api/logbook/{id}', async (req, res) => {
-    res.status(200).send();
+app.delete('/api/logbook/:id', async (req, res) => {
+    res.sendStatus(200);
 });
 
 /**

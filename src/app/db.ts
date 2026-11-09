@@ -25,7 +25,7 @@ export class Db {
     }
 
     public editEntry(entry: LogbookTableUpdate) {
-        return this.http.put<void>(`/api/logbook/edit/${entry.id}`, entry);
+        return this.http.put<void>(`/api/logbook/edit`, entry);
     }
 
     public deleteEntry(id: number) {

@@ -31,15 +31,17 @@ export class CrudForm implements OnInit {
 
     public ngOnInit() {
         if (this.id !== undefined) {
-            const entry = this.db.data()[Number(this.id) - 1];
-            this.logbookForm.patchValue({
-                title: entry.title,
-                description: entry.description,
-                context: entry.context,
-                startDate: unprettifyDate(entry.startDate),
-                endDate: unprettifyDate(entry.endDate),
-                impact: entry.impact.toString()
-            });
+            const entry = this.db.data().find(entry => entry.id.toString() === this.id);
+
+            if (entry !== undefined)
+                this.logbookForm.patchValue({
+                    title: entry.title,
+                    description: entry.description,
+                    context: entry.context,
+                    startDate: unprettifyDate(entry.startDate),
+                    endDate: unprettifyDate(entry.endDate),
+                    impact: entry.impact.toString()
+                });
         }
     }
 
