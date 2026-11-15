@@ -70,4 +70,10 @@ export class CrudForm implements OnInit {
                 });
         }
     }
+
+    public onDelete() {
+        this.db.deleteEntry(Number(this.id)).subscribe(() => {
+            this.router.navigate(['']);
+        });
+    }
 }

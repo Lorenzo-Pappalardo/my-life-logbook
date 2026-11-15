@@ -27,7 +27,9 @@ const db = getDbConnection();
  */
 
 app.get('/api/logbook', async (req, res) => {
-    const data: readonly LogbookTableRead[] = await db.select().from(logbookTable).all();
+    const data: readonly LogbookTableRead[] = (await db.select().from(logbookTable).all()).sort(
+        (a, b) => Date.parse(b.startDate) - Date.parse(a.startDate)
+    );
 
     // TO-DO: Add validation with Zod
 
@@ -44,7 +46,7 @@ app.post('/api/logbook/create', async (req, res) => {
 
     console.log(await db.insert(logbookTable).values(payload).run());
 
-    res.sendStatus(201);
+    res.status(201).send();
 });
 
 app.put('/api/logbook/edit', async (req, res) => {
@@ -52,13 +54,19 @@ app.put('/api/logbook/edit', async (req, res) => {
 
     // TO-DO: Add validation with Zod
 
+    payload.startDate = prettifyDate(payload.startDate);
+    payload.endDate = prettifyDate(payload.endDate);
+    payload.updatedAt = prettifyDate(new Date());
+
     if (payload.id != undefined) console.log(await db.update(logbookTable).set(payload).where(eq(logbookTable.id, payload.id)));
 
-    res.sendStatus(200);
+    res.status(200).send();
 });
 
-app.delete('/api/logbook/:id', async (req, res) => {
-    res.sendStatus(200);
+app.delete('/api/logbook/delete/:id', async (req, res) => {
+    console.log(await db.delete(logbookTable).where(eq(logbookTable.id, Number(req.params['id']))));
+
+    res.status(200).send();
 });
 
 /**

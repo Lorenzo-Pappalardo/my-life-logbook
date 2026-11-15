@@ -15,4 +15,4 @@ export const logbookTable = sqliteTable('logbook', {
 
 export type LogbookTableCreate = Omit<typeof logbookTable.$inferInsert, 'id' | 'createdAt' | 'updatedAt'>;
 export type LogbookTableRead = typeof logbookTable.$inferSelect;
-export type LogbookTableUpdate = Omit<typeof logbookTable.$inferInsert, 'createdAt' | 'updatedAt'>;
+export type LogbookTableUpdate = Omit<typeof logbookTable.$inferInsert, 'createdAt'>;
