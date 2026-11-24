@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { unprettifyDate } from '../../../db/prettify-date';
@@ -12,11 +12,12 @@ import { contexts } from './crud-form.model';
     styleUrl: './crud-form.css',
     templateUrl: './crud-form.html'
 })
-export class CrudForm implements OnInit {
+export class CrudForm implements OnInit, OnDestroy {
     #activatedRoute = inject(ActivatedRoute);
     #router = inject(Router);
     #db = inject(Db);
     #formBuilder = inject(FormBuilder);
+    #intervalId?: ReturnType<typeof setTimeout>;
 
     public readonly contexts = contexts;
     public readonly id: string = this.#activatedRoute.snapshot.params['id'];
@@ -42,7 +43,19 @@ export class CrudForm implements OnInit {
                     endDate: unprettifyDate(entry.endDate),
                     impact: entry.impact.toString()
                 });
+
+                console.log('Incremental save enabled');
+                this.#intervalId = setInterval(() => {
+                    this.onEdit(false);
+                    console.log('Incremental save performed');
+                }, 30000);
             }
+        }
+    }
+
+    public ngOnDestroy() {
+        if (this.#intervalId !== undefined) {
+            clearInterval(this.#intervalId);
         }
     }
 
@@ -73,7 +86,7 @@ export class CrudForm implements OnInit {
         };
     }
 
-    private onEdit() {
+    private onEdit(navigate = true) {
         const entry = this.getEntryPayload();
 
         this.#db
@@ -82,7 +95,7 @@ export class CrudForm implements OnInit {
                 ...entry
             } satisfies LogbookTableUpdate)
             .subscribe(() => {
-                this.#router.navigate(['']);
+                if (navigate) this.#router.navigate(['']);
             });
     }
 }
