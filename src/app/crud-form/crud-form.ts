@@ -13,14 +13,14 @@ import { contexts } from './crud-form.model';
     templateUrl: './crud-form.html'
 })
 export class CrudForm implements OnInit {
-    private readonly activatedRoute = inject(ActivatedRoute);
-    private router = inject(Router);
-    private readonly db = inject(Db);
-    private formBuilder = inject(FormBuilder);
+    #activatedRoute = inject(ActivatedRoute);
+    #router = inject(Router);
+    #db = inject(Db);
+    #formBuilder = inject(FormBuilder);
 
     public readonly contexts = contexts;
-    public readonly id: string = this.activatedRoute.snapshot.params['id'];
-    public readonly logbookForm = this.formBuilder.group({
+    public readonly id: string = this.#activatedRoute.snapshot.params['id'];
+    public readonly logbookForm = this.#formBuilder.group({
         title: ['', Validators.required],
         description: [''],
         context: ['', Validators.required],
@@ -31,9 +31,9 @@ export class CrudForm implements OnInit {
 
     public ngOnInit() {
         if (this.id !== undefined) {
-            const entry = this.db.data().find(entry => entry.id.toString() === this.id);
+            const entry = this.#db.data().find(entry => entry.id.toString() === this.id);
 
-            if (entry !== undefined)
+            if (entry !== undefined) {
                 this.logbookForm.patchValue({
                     title: entry.title,
                     description: entry.description,
@@ -42,11 +42,28 @@ export class CrudForm implements OnInit {
                     endDate: unprettifyDate(entry.endDate),
                     impact: entry.impact.toString()
                 });
+            }
         }
     }
 
     public onSubmit() {
-        const entry: LogbookTableCreate = {
+        if (this.id === undefined) {
+            this.#db.saveEntry(this.getEntryPayload()).subscribe(() => {
+                this.#router.navigate(['']);
+            });
+        } else {
+            this.onEdit();
+        }
+    }
+
+    public onDelete() {
+        this.#db.deleteEntry(Number(this.id)).subscribe(() => {
+            this.#router.navigate(['']);
+        });
+    }
+
+    private getEntryPayload(): LogbookTableCreate {
+        return {
             title: this.logbookForm.get('title')?.value as string,
             description: this.logbookForm.get('description')?.value as string,
             context: this.logbookForm.get('context')?.value as string,
@@ -54,26 +71,18 @@ export class CrudForm implements OnInit {
             endDate: this.logbookForm.get('endDate')?.value as string,
             impact: this.logbookForm.get('impact')?.value === 'true'
         };
-
-        if (this.id === undefined) {
-            this.db.saveEntry(entry).subscribe(() => {
-                this.router.navigate(['']);
-            });
-        } else {
-            this.db
-                .editEntry({
-                    id: Number(this.id),
-                    ...entry
-                } satisfies LogbookTableUpdate)
-                .subscribe(() => {
-                    this.router.navigate(['']);
-                });
-        }
     }
 
-    public onDelete() {
-        this.db.deleteEntry(Number(this.id)).subscribe(() => {
-            this.router.navigate(['']);
-        });
+    private onEdit() {
+        const entry = this.getEntryPayload();
+
+        this.#db
+            .editEntry({
+                id: Number(this.id),
+                ...entry
+            } satisfies LogbookTableUpdate)
+            .subscribe(() => {
+                this.#router.navigate(['']);
+            });
     }
 }

@@ -11,11 +11,11 @@ import { ImpactPipe } from '../impact-pipe';
     templateUrl: './data-table.html'
 })
 export class DataTable implements OnInit {
-    private readonly db = inject(Db);
+    #db = inject(Db);
 
-    public readonly data: Signal<readonly LogbookTableRead[]> = this.db.data;
+    public readonly data: Signal<readonly LogbookTableRead[]> = this.#db.data;
 
     public ngOnInit() {
-        this.db.getLogbookEntries();
+        this.#db.getLogbookEntries();
     }
 }
