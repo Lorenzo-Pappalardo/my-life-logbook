@@ -1,9 +1,12 @@
+using System.Reflection.PortableExecutable;
 using System.Text.RegularExpressions;
 
 internal static partial class Parser
 {
-    [GeneratedRegex("^(?<id>\\d+),\"?(?<title>.*)\"?,\"?(?<description>.*)\"?,(?<context>.*),(?<startDate>.*),(?<endDate>.*),(?<impact>.*),(?<createdAt>.*),(?<updatedAt>.*)$", RegexOptions.IgnoreCase)]
+    [GeneratedRegex("^(?<id>\\d+),(?<main>\"?.*\"?),(?<context>.*),(?<startDate>.*),(?<endDate>.*),(?<impact>.*),(?<createdAt>.*),(?<updatedAt>.*)$", RegexOptions.IgnoreCase)]
     private static partial Regex ComplexInput();
+    [GeneratedRegex("\"?(?<title>.*)(?<!\")\"?,\"?(?<description>.*)(?<!\")\"?", RegexOptions.IgnoreCase)]
+    private static partial Regex TitleAndDescription();
 
     [GeneratedRegex("\"\"", RegexOptions.IgnoreCase)]
     private static partial Regex DoubleQuotes();
@@ -32,14 +35,50 @@ internal static partial class Parser
                 if (matches.Success)
                 {
                     var id = matches.Groups["id"].Value;
-                    var title = matches.Groups["title"].Value;
-                    var description = matches.Groups["description"].Value;
+                    var main = matches.Groups["main"].Value;
                     var context = matches.Groups["context"].Value;
                     var startDate = matches.Groups["startDate"].Value;
                     var endDate = matches.Groups["endDate"].Value;
                     var impact = matches.Groups["impact"].Value;
                     var createdAt = matches.Groups["createdAt"].Value;
                     var updatedAt = matches.Groups["updatedAt"].Value;
+
+                    var title = "";
+                    var description = "";
+
+                    bool titleIsQuoted = main[0] == '"';
+                    int descriptionStartIndex = 0;
+                    for (var i = titleIsQuoted ? 1 : 0; i < main.Length; i++)
+                    {
+                        if (titleIsQuoted && main[i] == '"')
+                        {
+                            if (i < main.Length - 1 && main[i + 1] == ',')
+                            {
+                                descriptionStartIndex = i + 2;
+                                break;
+                            }
+                        }
+                        else if (!titleIsQuoted && main[i] == ',')
+                        {
+                            descriptionStartIndex = i + 1;
+                            break;
+                        }
+
+                        title += main[i];
+                    }
+
+                    if (descriptionStartIndex < main.Length)
+                    {
+                        var descriptionIsQuoted = main[descriptionStartIndex] == '"';
+                        if (descriptionIsQuoted)
+                        {
+                            description = main.Substring(descriptionStartIndex + 1, main.Length - descriptionStartIndex - 2);
+                        }
+                        else
+                        {
+                            description = main.Substring(descriptionStartIndex);
+                        }
+                    }
 
                     if (debugEnabled)
                     {
