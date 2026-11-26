@@ -2,7 +2,7 @@ using System.Text.RegularExpressions;
 
 internal static partial class Parser
 {
-    [GeneratedRegex("^(?<id>\\d+),\"(?<title>.*)\",\"(?<description>.*)\",(?<context>.*),(?<startDate>.*),(?<endDate>.*),(?<impact>.*),(?<createdAt>.*),(?<updatedAt>.*)$", RegexOptions.IgnoreCase)]
+    [GeneratedRegex("^(?<id>\\d+),\"?(?<title>.*)\"?,\"?(?<description>.*)\"?,(?<context>.*),(?<startDate>.*),(?<endDate>.*),(?<impact>.*),(?<createdAt>.*),(?<updatedAt>.*)$", RegexOptions.IgnoreCase)]
     private static partial Regex ComplexInput();
 
     [GeneratedRegex("\"\"", RegexOptions.IgnoreCase)]
@@ -13,6 +13,7 @@ internal static partial class Parser
         List<string> errors = [];
         List<Experience> experiences = [];
         bool skipHeaders = true;
+        int candidates = 0;
 
         foreach (string line in await File.ReadAllLinesAsync(path))
         {
@@ -21,6 +22,8 @@ internal static partial class Parser
                 skipHeaders = false;
                 continue;
             }
+
+            candidates++;
 
             try
             {
@@ -40,14 +43,14 @@ internal static partial class Parser
 
                     if (debugEnabled)
                     {
-                        Console.WriteLine('[' + id + ']');
-                        Console.WriteLine('[' + title + ']');
-                        Console.WriteLine('[' + description + ']');
-                        Console.WriteLine('[' + context + ']');
-                        Console.WriteLine('[' + startDate + ']');
-                        Console.WriteLine('[' + endDate + ']');
-                        Console.WriteLine('[' + impact + ']');
-                        Console.WriteLine('[' + createdAt + ']');
+                        Console.Write('[' + id + "] | ");
+                        Console.Write('[' + title + "] | ");
+                        Console.Write('[' + description + "] | ");
+                        Console.Write('[' + context + "] | ");
+                        Console.Write('[' + startDate + "] | ");
+                        Console.Write('[' + endDate + "] | ");
+                        Console.Write('[' + impact + "] | ");
+                        Console.Write('[' + createdAt + "] | ");
                         Console.WriteLine('[' + updatedAt + ']');
                     }
 
@@ -74,6 +77,9 @@ internal static partial class Parser
                 errors.Add($"{e.Message} ==> {line}");
             }
         }
+
+        if (debugEnabled)
+            Console.WriteLine($"Number of experiences in the source file: {candidates}");
 
         return (experiences, errors);
     }

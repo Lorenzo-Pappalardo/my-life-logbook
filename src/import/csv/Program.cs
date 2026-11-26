@@ -6,20 +6,17 @@ try
     string? path = null;
     var debugEnabled = false;
 
-    switch (args.Length)
+    if (args.Length == 0)
     {
-        case 0:
-            Console.WriteLine("Path to files to import:");
-            path = Console.ReadLine();
-            break;
+        Console.WriteLine("Path to files to import:");
+        path = Console.ReadLine();
+    }
+    else if (args.Length > 0)
+    {
+        path = args[0];
 
-        case 1:
-            path = args[0];
-            break;
-
-        case 2:
+        if (args.Length > 1)
             debugEnabled = args[1] == "-d";
-            break;
     }
 
     if (path == null || !File.Exists(path))
@@ -46,6 +43,8 @@ try
 
     if (debugEnabled)
     {
+        Console.WriteLine($"Number of records correctly parsed: {experiences.Count}");
+
         foreach (string error in errors)
         {
             Console.ForegroundColor = ConsoleColor.Red;
