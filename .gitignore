@@ -46,3 +46,7 @@ Thumbs.db
 src/environments/environment.*.ts
 
 db/*.sqlite*
+
+src/import/csv/bin
+src/import/csv/obj
+src/import/entries
