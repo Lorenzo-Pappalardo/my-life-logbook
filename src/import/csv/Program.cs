@@ -34,16 +34,6 @@ try
 
     (List<Experience> experiences, List<string> errors) = await Parser.Parse(path, debugEnabled);
 
-    foreach (string error in errors)
-    {
-        Console.ForegroundColor = ConsoleColor.Red;
-        Console.Error.WriteLine(error);
-        Console.ResetColor();
-    }
-
-    DateOnly today = DateOnly.FromDateTime(DateTime.Now);
-    using FileStream outputFile = File.Create(Path.Combine(outputDirectory, $"from_csv-{today.Year}_{today.Month}_{today.Day}.json"));
-
     JsonSerializerOptions jsonSerializerOptions = new()
     {
         IncludeFields = true,
@@ -51,6 +41,21 @@ try
         PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
         Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping
     };
+    DateOnly today = DateOnly.FromDateTime(DateTime.Now);
+    using FileStream errorOutputFile = File.Create(Path.Combine(outputDirectory, $"error_from_csv-{today.Year}_{today.Month}_{today.Day}.json"));
+
+    if (debugEnabled)
+    {
+        foreach (string error in errors)
+        {
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.Error.WriteLine(error);
+            Console.ResetColor();
+        }
+    }
+    await JsonSerializer.SerializeAsync(errorOutputFile, errors, jsonSerializerOptions);
+
+    using FileStream outputFile = File.Create(Path.Combine(outputDirectory, $"from_csv-{today.Year}_{today.Month}_{today.Day}.json"));
     await JsonSerializer.SerializeAsync(outputFile, experiences, jsonSerializerOptions);
 
     return errors.Count > 0 ? 1 : 0;
