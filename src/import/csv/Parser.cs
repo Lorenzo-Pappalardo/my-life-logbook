@@ -1,12 +1,9 @@
-using System.Reflection.PortableExecutable;
 using System.Text.RegularExpressions;
 
 internal static partial class Parser
 {
     [GeneratedRegex("^(?<id>\\d+),(?<main>\"?.*\"?),(?<context>.*),(?<startDate>.*),(?<endDate>.*),(?<impact>.*),(?<createdAt>.*),(?<updatedAt>.*)$", RegexOptions.IgnoreCase)]
     private static partial Regex ComplexInput();
-    [GeneratedRegex("\"?(?<title>.*)(?<!\")\"?,\"?(?<description>.*)(?<!\")\"?", RegexOptions.IgnoreCase)]
-    private static partial Regex TitleAndDescription();
 
     [GeneratedRegex("\"\"", RegexOptions.IgnoreCase)]
     private static partial Regex DoubleQuotes();
