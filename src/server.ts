@@ -2,9 +2,10 @@ import { AngularNodeAppEngine, createNodeRequestHandler, isMainModule, writeResp
 import { json } from 'body-parser';
 import { eq } from 'drizzle-orm';
 import express from 'express';
+import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { getDbConnection } from '../db/index';
-import { prettifyDate } from '../db/prettify-date';
+import { fromCSV, prettifyDate } from '../db/prettify-date';
 import { logbookTable, LogbookTableCreate, LogbookTableRead, LogbookTableUpdate } from '../db/schema';
 
 const browserDistFolder = join(import.meta.dirname, '../browser');
@@ -25,6 +26,32 @@ const db = getDbConnection();
  * });
  * ```
  */
+
+app.post('/api/import', async (req, res) => {
+    let { f: filename } = req.body as { f: string };
+
+    const matches = /from_csv-\d{4}_\d{2}_\d{2}\.json/g.exec(filename);
+    const invalid = matches === null;
+
+    const fullPath = `./src/import/entries/${filename}`;
+    const missing = !existsSync(fullPath);
+    if (invalid || missing) {
+        res.status(400).send(invalid ? 'Invalid filename' : 'File not found');
+        return;
+    }
+
+    const entries = JSON.parse(readFileSync(fullPath, { encoding: 'utf8' })) as readonly LogbookTableRead[];
+    for (const entry of entries) {
+        entry.startDate = fromCSV(entry.startDate);
+        entry.endDate = fromCSV(entry.endDate);
+        entry.createdAt = fromCSV(entry.createdAt);
+        entry.updatedAt = fromCSV(entry.updatedAt);
+
+        console.log(await db.insert(logbookTable).values(entry).run());
+    }
+
+    res.status(201).send();
+});
 
 app.get('/api/logbook', async (req, res) => {
     const data: readonly LogbookTableRead[] = (await db.select().from(logbookTable).all()).sort(

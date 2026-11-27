@@ -58,6 +58,12 @@ Angular CLI does not come with an end-to-end testing framework by default. You c
 
 It relies on Drizzle ORM and Turso DB ([docs here](https://orm.drizzle.team/docs/sqlite/column-types)).
 
+### Import
+
+```powershell
+Invoke-WebRequest -Uri "http://localhost:4200/api/import" -Method POST -ContentType "application/json" -Body '{"f":"from_csv-2026_11_27.json"}'
+```
+
 ## Additional Resources
 
 For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
